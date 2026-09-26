@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORIES, whatsappLink, type Listing } from "@/lib/categories";
+import { CATEGORIES, openWhatsapp, whatsappLink, type Listing } from "@/lib/categories";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 
 export const Route = createFileRoute("/")({
@@ -197,6 +197,10 @@ function BrowsePage() {
                   href={whatsappLink(l.contact, l.name)}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    openWhatsapp(whatsappLink(l.contact, l.name));
+                  }}
                   className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
                 >
                   <svg
