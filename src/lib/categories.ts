@@ -25,7 +25,6 @@ export function whatsappLink(contact: string, businessName: string) {
   let digits = contact.replace(/\D/g, "");
   // wa.me requires full international format — assume India for 10-digit numbers
   if (digits.length === 10) digits = `91${digits}`;
-  if (digits.length === 12 && digits.startsWith("91") === false) digits = digits;
   const text = encodeURIComponent(
     `Namaste! I found ${businessName} on Hunar Hub and I'd like to know more about your work.`,
   );
