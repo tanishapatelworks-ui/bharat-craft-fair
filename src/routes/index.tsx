@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORIES, openWhatsapp, whatsappLink, type Listing } from "@/lib/categories";
+import { CATEGORIES, displayNumber, whatsappLink, type Listing } from "@/lib/categories";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 
 export const Route = createFileRoute("/")({
@@ -26,6 +26,28 @@ export const Route = createFileRoute("/")({
   }),
   component: BrowsePage,
 });
+
+function CopyNumber({ contact }: { contact: string }) {
+  const [copied, setCopied] = useState(false);
+  const number = displayNumber(contact);
+  return (
+    <button
+      type="button"
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(number);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        } catch {
+          window.prompt("Copy this WhatsApp number:", number);
+        }
+      }}
+      className="mt-2 text-center text-xs font-semibold text-muted-foreground underline-offset-2 hover:text-secondary hover:underline"
+    >
+      {copied ? "Number copied ✓" : `${number} · Copy number`}
+    </button>
+  );
+}
 
 function BrowsePage() {
   const [search, setSearch] = useState("");
@@ -197,10 +219,6 @@ function BrowsePage() {
                   href={whatsappLink(l.contact, l.name)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    openWhatsapp(whatsappLink(l.contact, l.name));
-                  }}
                   className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
                 >
                   <svg
@@ -208,10 +226,11 @@ function BrowsePage() {
                     className="h-4 w-4 fill-current"
                     aria-hidden="true"
                   >
-                    <path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.96L2 22l5.2-1.5A9.9 9.9 0 1 0 12.04 2Zm5.8 14.1c-.25.7-1.45 1.34-2 1.4-.52.05-1.17.24-3.94-.82-3.33-1.31-5.44-4.7-5.6-4.92-.17-.22-1.35-1.8-1.35-3.43 0-1.63.85-2.43 1.15-2.76.3-.33.66-.42.88-.42h.63c.2 0 .47-.07.74.57.27.65.93 2.26 1.01 2.42.08.17.14.36.03.58-.11.22-.17.36-.33.55-.17.2-.35.44-.5.6-.17.16-.34.34-.15.66.2.33.88 1.45 1.9 2.35 1.3 1.16 2.4 1.52 2.74 1.7.33.16.53.14.72-.09.2-.22.83-.97 1.05-1.3.22-.34.44-.28.74-.17.3.11 1.92.9 2.25 1.07.33.17.55.25.63.39.08.14.08.8-.17 1.5Z" />
+                    <path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.96L2 22l5.2-1.5A9.9 9.9 0 1 0 12.04 2Zm5.8 14.1c-.25.7-1.45 1.34-2 1.4-.52.05-1.170.24-3.94-.82-3.33-1.310-5.44-4.7-5.6-4.920-.17-.22-1.35-1.8-1.35-3.43 0-1.63.85-2.43 1.15-2.76.3-.33.66-.42.88-.42h.63c.2 0 .47-.07.74.57.27.65.93 2.26 1.01 2.42.08.17.14.36.03.58-.11.22-.17.36-.33.55-.17.2-.35.44-.5.6-.17.16-.34.34-.15.66.2.33.88 1.45 1.9 2.35 1.3 1.16 2.4 1.52 2.74 1.7.33.16.53.14.72-.09.2-.22.83-.97 1.050-1.3.22-.34.44-.28.74-.17.3.11 1.92.9 2.25 1.07.33.17.55.25.63.39.08.14.08.8-.17 1.5Z" />
                   </svg>
                   Chat on WhatsApp
                 </a>
+                <CopyNumber contact={l.contact} />
               </article>
             ))}
           </div>
